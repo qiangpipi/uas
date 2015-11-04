@@ -1,4 +1,3 @@
-# uas
-# User authentication system
+# UAS - User authentication system
 ## Ldap backend
 ## Http interfaces

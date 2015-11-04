@@ -4,10 +4,10 @@ import (
 	. "fmt"
 )
 
-var D *bool
+var D bool
 
 func Debug(debug ...interface{}) {
-	if *D {
-		Println(info)
+	if D {
+		Println(debug)
 	}
 }

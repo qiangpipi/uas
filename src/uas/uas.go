@@ -7,12 +7,19 @@ import (
 )
 
 func main() {
+	D = true
+	http.HandleFunc("/", functions.Homepage)
 	http.HandleFunc("/useradd", functions.UserAdd)
+	//URL: useradd?username=<>
 	http.HandleFunc("/passwd", functions.Passwd)
+	//URL: passwd?username=<>&password=<>&newpass=<>&newpassagain=<>
 	http.HandleFunc("/userdel", functions.UserDel)
+	//URL: userdel?username=<>
 	http.HandleFunc("/databackup", functions.DataBackup)
+	//URL: databackup?TBD
 	http.HandleFunc("/datarestore", functions.DataRestore)
-	srv := &http.Server{Addr: "0.0.0.0:8888", Handler: nil}
+	//URL: datarestore?TBD
+	srv := &http.Server{Addr: "0.0.0.0:9999", Handler: nil}
 	err := srv.ListenAndServe()
 	if err != nil {
 		Error("Start http server failed")
