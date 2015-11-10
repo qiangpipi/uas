@@ -6,6 +6,7 @@ import (
 	. "logs"
 	"net/http"
 	"os"
+	"regexp"
 	"strings"
 )
 
@@ -62,6 +63,7 @@ func Passwd(w http.ResponseWriter, r *http.Request) {
 	password := ""
 	newpass := ""
 	newpassagain := ""
+	rule := regexp.MustCompile(`[\x00-\x2F\x3A-\x40\x5B-\x60\x7B-\x7F]`)
 	fd := readHomepage("data/main.html")
 	if err := r.ParseForm(); err != nil {
 	}
@@ -84,13 +86,13 @@ func Passwd(w http.ResponseWriter, r *http.Request) {
 	if len(r.Form) != 4 {
 		Debug(len(r.Form))
 		w.Write([]byte("<font color=\"red\">Bad para and please try again</font>"))
-	} else if username == "" {
-		w.Write([]byte("<font color=\"red\">Username IS blank and please try again</font>"))
-	} else if password == "" {
-		w.Write([]byte("<font color=\"red\">Password IS blank and please try again</font>"))
-	} else if newpass == "" {
-		w.Write([]byte("<font color=\"red\">Newpass IS blank and please try again</font>"))
-	} else if newpass != newpassagain {
+	} else if username == "" || rule.MatchString(username) {
+		w.Write([]byte("<font color=\"red\">Username invalid and please try againi. Rule:[0-9A-Za-z]</font>"))
+	} else if password == "" || rule.MatchString(password) {
+		w.Write([]byte("<font color=\"red\">Password invalid and please try again. Rule:[0-9A-Za-z]</font>"))
+	} else if newpass == "" || rule.MatchString(newpass) {
+		w.Write([]byte("<font color=\"red\">Newpass invalid and please try again. Rule:[0-9A-Za-z]</font>"))
+	} else if newpass != newpassagain || rule.MatchString(newpassagain) {
 		w.Write([]byte("<font color=\"red\">Newpass not equal newpassagain and please try again</font>"))
 	} else {
 		//Change password in database
