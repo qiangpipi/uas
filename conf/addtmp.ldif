@@ -1,0 +1,7 @@
+dn: ${userSuffix},${baseDN}
+objectClass: organizationalUnit
+ou: people
+
+dn: ${groupSuffix},${baseDN}
+objectClass: organizationalUnit
+ou: groups
