@@ -17,7 +17,8 @@ fi
 mkdir -p /usr/local/uas
 #Copy binary to /usr/local/uas
 cp uas /usr/local/uas/.
+cp uas.sh /usr/local/uas/.
 cp -r ./data /usr/local/uas/.
 cp -r ./conf /usr/local/uas/.
 #Create link in /usr/bin
-ln -sf /usr/local/uas/uas /usr/bin/uas
+ln -sf /usr/local/uas/uas.sh /usr/bin/uas

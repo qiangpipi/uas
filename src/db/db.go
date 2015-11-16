@@ -6,9 +6,15 @@ import (
 	"strings"
 )
 
+var BindDn string
+var BindPwd string
+var BaseDn string
+var GroupSuffix string
+var UserSuffix string
+
 func commExec(cmd string, arg ...string) (output string, err error) {
 	output = ""
-	//stdout, err := exec.Command(cmd, arg).Output()
+	Debug(cmd, arg)
 	stdout, err := exec.Command(cmd, arg...).Output()
 	Debug("db.commExec: stdout:", stdout)
 	if err != nil {
@@ -25,7 +31,7 @@ func whoami(username, password string) (who string, err error) {
 	command := "ldapwhoami"
 	arg1 := "-x"
 	arg2 := "-w" + password
-	arg3 := "-D uid=" + username + ",ou=people,dc=systek"
+	arg3 := "-Duid=" + username + "," + UserSuffix + "," + BaseDn
 	who, err = commExec(command, arg1, arg2, arg3)
 	who = strings.Trim(who, "\n")
 	return who, err
@@ -40,10 +46,15 @@ func ldapsetpasswd(username, password string) (res string, err error) {
 	return res, err
 }
 
-func UserAdd(username string) error {
-	//
+func ldapadduser(username string) (res string, err error) {
+	Debug("db.ldapuseradd: username:", username)
+	command := "ldapadduser"
+}
+
+func UserAdd(username string) string {
 	Debug("db.UserAdd: username: ", username)
-	return nil
+	res := "OK"
+	return res
 }
 
 func PasswordCheck(username, password string) string {
@@ -51,7 +62,7 @@ func PasswordCheck(username, password string) string {
 		", passwd: ", password)
 	res := "OK"
 	dn, err := whoami(username, password)
-	Debug("db.PasswordCheck: dn:", dn)
+	Debug("db.PasswordCheck: dn1:", dn)
 	if err != nil {
 		if err.Error() == "exit status 49" {
 			res = "Current password check failed"
@@ -59,7 +70,7 @@ func PasswordCheck(username, password string) string {
 			res = "Unknown error"
 		}
 	} else {
-		if dn == "dn:uid="+username+",ou=people,dc=systek" {
+		if dn == "dn:uid="+username+","+UserSuffix+","+BaseDn {
 			res = "OK"
 		} else {
 			res = "Current password check failed"

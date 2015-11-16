@@ -2,6 +2,7 @@ package functions
 
 import (
 	"db"
+	"encoding/json"
 	"io/ioutil"
 	. "logs"
 	"net/http"
@@ -9,6 +10,30 @@ import (
 	"regexp"
 	"strings"
 )
+
+var Ip string
+var Port string
+
+type Conf struct {
+	ServiceIp   string
+	ServicePort string
+	BindDn      string
+	BindPwd     string
+	BaseDn      string
+	GroupSuffix string
+	UserSuffix  string
+	Debug       bool
+}
+
+func readFromFile(filename string, foldername string) (buf []byte) {
+	uasroot := os.Getenv("PWD")
+	fullpath := uasroot + "/" + foldername + "/" + filename
+	buf, err := ioutil.ReadFile(fullpath)
+	if err != nil {
+		Error("File read failed:", err)
+	}
+	return buf
+}
 
 func readHomepage(fn string) []byte {
 	var fd []byte
@@ -21,6 +46,31 @@ func readHomepage(fn string) []byte {
 		fd, _ = ioutil.ReadAll(file)
 	}
 	return fd
+}
+
+func ReadConf() (res string) {
+	var c Conf
+	res = "OK"
+	cbuf := readFromFile("uas.conf", "conf")
+	if err := json.Unmarshal(cbuf, &c); err != nil {
+		Error("function.ReadConf:", err)
+	}
+	//Ip address validation
+	Ip = c.ServiceIp
+	//Port validation
+	Port = c.ServicePort
+	db.BindDn = c.BindDn
+	db.BindPwd = c.BindPwd
+	db.BaseDn = c.BaseDn
+	db.GroupSuffix = c.GroupSuffix
+	db.UserSuffix = c.UserSuffix
+	D = c.Debug
+	return res
+}
+
+func CheckDb() (res string) {
+	res = "OK"
+	return res
 }
 
 func Homepage(w http.ResponseWriter, r *http.Request) {

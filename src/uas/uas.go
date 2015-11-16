@@ -7,7 +7,8 @@ import (
 )
 
 func main() {
-	D = true
+	functions.ReadConf()
+	functions.CheckDb()
 	http.HandleFunc("/", functions.Homepage)
 	http.HandleFunc("/useradd", functions.UserAdd)
 	//URL: useradd?username=<>
